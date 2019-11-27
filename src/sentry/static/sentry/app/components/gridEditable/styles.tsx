@@ -81,7 +81,7 @@ export const Body: React.FC = props => (
 export const Grid = styled('table')<GridEditableProps>`
   position: relative;
   display: grid;
-  grid-template-columns: 500px repeat(${p => (p.numColumn ? p.numColumn - 1 : 0)}, 400px);
+  grid-template-columns: repeat(${p => (p.numColumn ? p.numColumn : 0)}, 100px);
 
   box-sizing: border-box;
   border-collapse: collapse;

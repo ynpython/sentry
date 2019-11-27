@@ -51,8 +51,7 @@ const reverseSort = (sort: Sort): Sort => {
 export type Field = {
   field: string;
   title: string;
-  // TODO: implement later
-  // width: number;
+  width: number;
 };
 
 const isSortEqualToField = (
@@ -120,11 +119,21 @@ const decodeFields = (location: Location): Array<Field> => {
     return [];
   }
 
-  const fields: string[] = isString(query.field) ? [query.field] : query.field;
+  // TODO(leedongwei): Welp
+  const fields: string[] = Array.isArray(query.field)
+    ? query.field
+    : isString(query.field)
+    ? [query.field]
+    : [];
   const fieldnames: string[] = Array.isArray(query.fieldnames)
     ? query.fieldnames
     : isString(query.fieldnames)
     ? [query.fieldnames]
+    : [];
+  const widths = Array.isArray(query.widths)
+    ? query.widths
+    : isString(query.widths)
+    ? [query.widths]
     : [];
 
   const parsed: Field[] = [];
@@ -133,7 +142,9 @@ const decodeFields = (location: Location): Array<Field> => {
     if (fieldnames[i]) {
       title = fieldnames[i];
     }
-    parsed.push({field, title});
+
+    const width = widths.length > i ? Number(widths[i]) : 200;
+    parsed.push({field, title, width});
   });
 
   return parsed;

@@ -369,6 +369,11 @@ class TableView extends React.Component<TableViewProps> {
     }
   };
 
+  onResizeColumn = (columnIndex: number, nextColumn: TableColumn<keyof TableDataRow>) => {
+    console.warn('onResizeColumn', columnIndex, nextColumn);
+    this._updateColumn(columnIndex, nextColumn);
+  };
+
   render() {
     const {organization, isLoading, error, tableData, tagKeys, eventView} = this.props;
 

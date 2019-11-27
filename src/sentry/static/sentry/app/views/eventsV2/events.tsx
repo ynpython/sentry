@@ -112,7 +112,8 @@ export default class Events extends React.Component<EventsProps> {
           query={query}
           onSearch={this.handleSearch}
         /> */}
-        {/* <Panel>
+        {/*
+        <Panel>
           {getDynamicText({
             value: (
               <EventsChart
@@ -127,7 +128,8 @@ export default class Events extends React.Component<EventsProps> {
             ),
             fixed: 'events chart',
           })}
-        </Panel> */}
+        </Panel>
+        */}
         <Container hasTags={eventView.tags.length > 0}>
           <Table organization={organization} eventView={eventView} location={location} />
           {this.renderTagsTable()}

@@ -32,6 +32,7 @@ import {
   GridBodyErrorAlert,
   GridResizer,
 } from './styles';
+import {ColResizeMetadata} from './gridResizeUtils';
 
 type GridEditableProps<DataRow, ColumnKey> = {
   onToggleEdit?: (nextValue: boolean) => void;
@@ -70,6 +71,10 @@ type GridEditableProps<DataRow, ColumnKey> = {
       column: GridColumnOrder<ColumnKey>,
       dataRow: DataRow
     ) => React.ReactNode;
+    onResizeColumn?: (
+      columnIndex: number,
+      nextColumn: GridColumnOrder<ColumnKey>
+    ) => void;
   };
 
   /**
@@ -90,7 +95,8 @@ type GridEditableProps<DataRow, ColumnKey> = {
 
   /**
    * As there is no internal state being maintained, the parent component will
-   * have to provide functions to move/delete the columns
+   * have to provide functions to update the state of the columns, especially
+   * after moving/resizing
    */
   actions: {
     moveColumnCommit: (indexFrom: number, indexTo: number) => void;
@@ -118,14 +124,6 @@ class GridEditable<
     isEditable: false,
   };
 
-  state = {
-    numColumn: 0,
-    isEditing: false,
-
-    isResizeActive: -1,
-    isResizeHover: -1,
-  };
-
   // Static methods do not allow the use of generics bounded to the parent class
   // For more info: https://github.com/microsoft/TypeScript/issues/14600
   static getDerivedStateFromProps(
@@ -138,27 +136,73 @@ class GridEditable<
     };
   }
 
-  private refGrid = React.createRef<HTMLTableElement>();
-  // private refResize
+  state = {
+    numColumn: 0,
+    isEditing: false,
 
-  onMouseEnterResize = (i: number) => {
-    this.setState({isResizeHover: i});
+    isResizeActive: -1,
+    isResizeHover: -1,
   };
-  onMouseLeaveResize = () => {
+
+  componentWillUnmount() {
+    this.clearWindowLifecycleEvents();
+  }
+
+  private refGrid = React.createRef<HTMLTableElement>();
+
+  private resizeMetadata?: ColResizeMetadata;
+  private resizeWindowLifecycleEvents: {
+    [eventName: string]: any[];
+  } = {
+    mousemove: [],
+    mouseup: [],
+    cancelAnimationFrame: [],
+  };
+
+  onResizeMouseEnter = (columnIndex: number) => {
+    this.setState({isResizeHover: columnIndex});
+  };
+
+  onResizeMouseLeave = () => {
     this.setState({isResizeHover: -1, isResizeActive: -1});
   };
-  onMouseDownResize = (e: React.MouseEvent, i: number) => {
-    console.log('onMouseDownResize');
+
+  onResizeMouseDown = (e: React.MouseEvent, i: number) => {
     this.setState({isResizeActive: i});
-    this.resizeInitialize(e, i);
+
+    const cell = e.currentTarget && e.currentTarget.parentElement;
+    if (!cell) {
+      return;
+    }
+
+    this.resizeMetadata = {
+      columnIndex: i,
+      columnOffsetWidth: cell.offsetWidth,
+      columnHtmlElement: cell,
+      cursorX: e.clientX,
+    };
+
+    window.addEventListener('mousemove', this.onResizeMouseMove);
+    this.resizeWindowLifecycleEvents.mousemove.push(this.onResizeMouseMove);
+
+    window.addEventListener('mouseup', this.onResizeMouseUp);
+    this.resizeWindowLifecycleEvents.mouseup.push(this.onResizeMouseUp);
   };
-  onMouseUpResize = (_e: React.MouseEvent) => {
-    console.log('onMouseUpResize');
+
+  onResizeMouseUp = () => {
+    this.resizeMetadata = undefined;
     this.setState({isResizeActive: -1});
+    this.clearWindowLifecycleEvents();
   };
-  onMouseMoveResize = (_e: React.MouseEvent, _i: number) => {
-    console.log('onMouseMoveResize');
-    this.resizeRun(_e, _i);
+
+  onResizeMouseMove = (e: MouseEvent) => {
+    if (!this.resizeMetadata) {
+      console.warn('failed to get resizeMeta');
+      return;
+    }
+
+    const metadata = {...this.resizeMetadata};
+    window.requestAnimationFrame(() => this.resizeGridColumn(e, metadata));
   };
 
   toggleEdit = () => {
@@ -199,26 +243,39 @@ class GridEditable<
     ));
   };
 
-  resizeInitialize = (e: React.MouseEvent, i: number) => {
-    console.log('resizeStart');
+  clearWindowLifecycleEvents = () => {
+    Object.keys(this.resizeWindowLifecycleEvents).forEach(e => {
+      const callbacks = this.resizeWindowLifecycleEvents[e];
 
-    const happyFunction = () => this.onMouseMoveResize(e, i);
-    window.addEventListener('mousemove', happyFunction);
-    window.addEventListener('mouseup', () => {
-      window.removeEventListener('mousemove', happyFunction);
+      if (e === 'cancelAnimationFrame') {
+        callbacks.forEach(c => window.cancelAnimationFrame(c));
+      } else {
+        callbacks.forEach(c => window.removeEventListener(e, c));
+      }
+
+      this.resizeWindowLifecycleEvents[e] = [];
     });
   };
-  resizeRun = (e: React.MouseEvent, _i: number) => {
+
+  /**
+   *
+   */
+  resizeGridColumn = (e: MouseEvent, metadata: ColResizeMetadata) => {
     const grid = this.refGrid.current;
     if (!grid) {
       return;
     }
-    const resizer = e.target;
-    console.log(grid.offsetWidth);
-    console.log(grid.scrollLeft);
-    console.log(window.scrollX);
-    // console.log(resizer.offsetWidth);
-    // console.log(resizer.scrollLeft);
+
+    const widthChange = e.clientX - metadata.cursorX;
+    const templateCol = this.props.columnOrder.map(() => {
+      return '100px';
+    });
+
+    templateCol[metadata.columnIndex] = `${metadata.columnOffsetWidth + widthChange}px`;
+
+    console.log(templateCol);
+
+    grid.style.gridTemplateColumns = templateCol.join(' ');
   };
 
   renderHeaderButton = () => {
@@ -327,14 +384,11 @@ class GridEditable<
           <GridBodyCell key={`${col.key}${i}`}>
             {grid.renderBodyCell ? grid.renderBodyCell(col, dataRow) : dataRow[col.key]}
             <GridResizer
-              isHidden={i + 1 === columnOrder.length}
               isActive={i === isResizeActive}
               isHover={i === isResizeHover}
-              onMouseEnter={() => this.onMouseEnterResize(i)}
-              onMouseLeave={() => this.onMouseLeaveResize()}
-              onMouseDown={e => this.onMouseDownResize(e, i)}
-              // onMouseUp={e => this.onMouseUpResize(e, i)}
-              // onMouseMove={e => this.onMouseMoveResize(e, i)}
+              onMouseEnter={() => this.onResizeMouseEnter(i)}
+              onMouseLeave={() => this.onResizeMouseLeave()}
+              onMouseDown={e => this.onResizeMouseDown(e, i)}
             />
           </GridBodyCell>
         ))}
