@@ -1,4 +1,4 @@
-import {css} from 'emotion';
+import {css} from '@emotion/core';
 import isEqual from 'lodash/isEqual';
 import PropTypes from 'prop-types';
 import React from 'react';
