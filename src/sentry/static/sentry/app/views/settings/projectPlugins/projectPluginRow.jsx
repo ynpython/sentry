@@ -4,8 +4,9 @@ import {Flex} from 'grid-emotion';
 import {Link} from 'react-router';
 import PropTypes from 'prop-types';
 import React from 'react';
-import styled from 'react-emotion';
-import {css} from 'react-emotion';
+import styled from '@emotion/styled';
+import {css} from '@emotion/core';;
+
 
 import {t} from 'app/locale';
 import ExternalLink from 'app/components/links/externalLink';

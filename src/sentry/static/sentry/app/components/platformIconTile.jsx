@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
-import styled from 'react-emotion';
-import {css} from 'react-emotion';
+import styled from '@emotion/styled';
+import {css} from '@emotion/core';;
+
 
 const PLATFORM_ICONS = {
   'app-engine': '\\e60b',

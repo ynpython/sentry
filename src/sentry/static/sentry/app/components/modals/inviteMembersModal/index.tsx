@@ -1,6 +1,7 @@
 import React from 'react';
-import styled from 'react-emotion';
-import {css} from 'react-emotion';
+import styled from '@emotion/styled';
+import {css} from '@emotion/core';;
+
 
 import {t, tn, tct} from 'app/locale';
 import {MEMBER_ROLES} from 'app/constants';
