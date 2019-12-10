@@ -46,7 +46,6 @@ class HeaderItem extends React.Component<Props> {
 
   render() {
     const {
-      className,
       children,
       isOpen,
       hasSelected,
@@ -61,7 +60,8 @@ class HeaderItem extends React.Component<Props> {
     } = this.props;
     return (
       <StyledHeaderItem
-        className={className}
+        hasSelected={hasSelected}
+        isOpen={isOpen}
         locked={locked}
         loading={loading}
         {...props}
@@ -98,7 +98,12 @@ const getColor = p => {
   return p.isOpen || p.hasSelected ? p.theme.gray4 : p.theme.gray2;
 };
 
-const StyledHeaderItem = styled('div')<{locked: boolean; loading: boolean}>`
+const StyledHeaderItem = styled('div')<{
+  isOpen: boolean;
+  hasSelected: boolean;
+  locked: boolean;
+  loading: boolean;
+}>`
   display: flex;
   padding: 0 ${space(4)};
   align-items: center;
