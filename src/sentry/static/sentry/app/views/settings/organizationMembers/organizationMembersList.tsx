@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import {css} from '@emotion/core';;
-
+import {css} from '@emotion/core';
 
 import {Panel, PanelBody, PanelHeader} from 'app/components/panels';
 import {addErrorMessage, addSuccessMessage} from 'app/actionCreators/indicator';

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import {css} from '@emotion/core';;
+import {css} from '@emotion/core';
 
 import {Flex} from '@rebass/grid/emotion';
 import space from 'app/styles/space';
