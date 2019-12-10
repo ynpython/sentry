@@ -12,44 +12,41 @@ type Props = {
   toggle: React.HTMLProps<HTMLButtonElement>['onClick'];
 };
 
-const Switch: React.FC<Props> = ({
-  size,
-  isActive,
-  isLoading,
-  isDisabled,
-  toggle,
-  id,
-  className,
-}) => (
-  <SwitchButton
-    id={id}
-    type="button"
-    className={className}
-    onClick={isDisabled ? undefined : toggle}
-    role="checkbox"
-    aria-checked={isActive}
-    isLoading={isLoading}
-    isDisabled={isDisabled}
-    isActive={isActive}
-    size={size}
-    data-test-id="switch"
-  >
-    <Toggle isDisabled={isDisabled} isActive={isActive} size={size} />
-  </SwitchButton>
-);
+class Switch extends React.Component<Props> {
+  static propTypes = {
+    id: PropTypes.string,
+    size: PropTypes.oneOf(['sm', 'lg']),
+    isActive: PropTypes.bool,
+    isLoading: PropTypes.bool,
+    isDisabled: PropTypes.bool,
+    toggle: PropTypes.func.isRequired,
+  };
 
-Switch.propTypes = {
-  id: PropTypes.string,
-  size: PropTypes.oneOf(['sm', 'lg']),
-  isActive: PropTypes.bool,
-  isLoading: PropTypes.bool,
-  isDisabled: PropTypes.bool,
-  toggle: PropTypes.func.isRequired,
-};
+  static defaultProps = {
+    size: 'sm',
+  };
 
-Switch.defaultProps = {
-  size: 'sm',
-};
+  render() {
+    const {size, isActive, isLoading, isDisabled, toggle, id, className} = this.props;
+    return (
+      <SwitchButton
+        id={id}
+        type="button"
+        className={className}
+        onClick={isDisabled ? undefined : toggle}
+        role="checkbox"
+        aria-checked={isActive}
+        isLoading={isLoading}
+        isDisabled={isDisabled}
+        isActive={isActive}
+        size={size}
+        data-test-id="switch"
+      >
+        <Toggle isDisabled={isDisabled} isActive={isActive} size={size} />
+      </SwitchButton>
+    );
+  }
+}
 
 type StyleProps = Partial<Props>;
 
