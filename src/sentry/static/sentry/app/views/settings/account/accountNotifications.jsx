@@ -1,5 +1,3 @@
-/** @jsx jsx */
-import {jsx} from '@emotion/core';
 import {Box} from '@rebass/grid/emotion';
 import PropTypes from 'prop-types';
 import React from 'react';

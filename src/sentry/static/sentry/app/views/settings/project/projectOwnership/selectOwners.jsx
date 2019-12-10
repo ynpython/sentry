@@ -1,5 +1,3 @@
-/** @jsx jsx */
-import {jsx} from '@emotion/core';
 import debounce from 'lodash/debounce';
 import {Flex} from '@rebass/grid/emotion';
 import PropTypes from 'prop-types';

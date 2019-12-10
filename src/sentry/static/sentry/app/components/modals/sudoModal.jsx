@@ -1,5 +1,3 @@
-/** @jsx jsx */
-import {jsx} from '@emotion/core';
 import {withRouter} from 'react-router';
 import PropTypes from 'prop-types';
 import React from 'react';

@@ -1,5 +1,3 @@
-/** @jsx jsx */
-import {jsx} from '@emotion/core';
 import {ClassNames, css} from '@emotion/core';
 import {browserHistory} from 'react-router';
 import PropTypes from 'prop-types';
