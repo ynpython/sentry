@@ -1,7 +1,8 @@
+import {Link} from 'react-router';
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import {Link} from 'react-router';
+import isPropValid from '@emotion/is-prop-valid';
 
 import InlineSvg from 'app/components/inlineSvg';
 import Tooltip from 'app/components/tooltip';
@@ -104,7 +105,7 @@ const getColor = (p: {
   return p.isOpen || p.hasSelected ? p.theme.gray4 : p.theme.gray2;
 };
 
-const StyledHeaderItem = styled('div')<{
+const StyledHeaderItem = styled('div', {shouldForwardProp: isPropValid})<{
   isOpen: boolean;
   hasSelected: boolean;
   locked: boolean;
@@ -125,12 +126,12 @@ const Content = styled('div')`
   ${overflowEllipsis};
 `;
 
-const IconContainer = styled('span')`
+const IconContainer = styled('span', {shouldForwardProp: isPropValid})`
   color: ${getColor};
   margin-right: ${space(1.5)};
 `;
 
-const StyledClose = styled(InlineSvg)`
+const StyledClose = styled(InlineSvg, {shouldForwardProp: isPropValid})`
   color: ${getColor};
   height: ${space(1.5)};
   width: ${space(1.5)};
