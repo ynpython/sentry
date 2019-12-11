@@ -2,7 +2,6 @@ import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import SentryTypes from 'app/sentryTypes';
-import SearchBar from 'app/components/searchBar';
 
 import {t} from 'app/locale';
 import SearchBar from 'app/components/searchBar';

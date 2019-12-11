@@ -58,18 +58,19 @@ class HeaderItem extends React.Component<Props> {
       loading,
       ...props
     } = this.props;
+
+    const textColorProps = {
+      locked,
+      isOpen,
+      hasSelected,
+    };
+
     return (
-      <StyledHeaderItem
-        hasSelected={hasSelected}
-        isOpen={isOpen}
-        locked={locked}
-        loading={loading}
-        {...props}
-      >
-        <IconContainer>{icon}</IconContainer>
+      <StyledHeaderItem loading={loading} {...props} {...textColorProps}>
+        <IconContainer {...textColorProps}>{icon}</IconContainer>
         <Content>{children}</Content>
         {hasSelected && !locked && allowClear && (
-          <StyledClose src="icon-close" onClick={this.handleClear} />
+          <StyledClose {...textColorProps} src="icon-close" onClick={this.handleClear} />
         )}
         {settingsLink && (
           <SettingsIconLink to={settingsLink}>
@@ -91,7 +92,12 @@ class HeaderItem extends React.Component<Props> {
   }
 }
 
-const getColor = p => {
+const getColor = (p: {
+  locked: boolean;
+  isOpen: boolean;
+  hasSelected: boolean;
+  theme: any;
+}) => {
   if (p.locked) {
     return p.theme.gray2;
   }
