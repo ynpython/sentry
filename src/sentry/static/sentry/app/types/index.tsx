@@ -21,6 +21,10 @@ export type LightWeightOrganization = {
   name: string;
   access: string[];
   features: string[];
+  status: {
+    id: string;
+    name: string;
+  };
 };
 
 export type Organization = LightWeightOrganization & {
