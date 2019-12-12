@@ -11,14 +11,13 @@ const BetaTag = () => (
     position="right"
   >
     <StyledTag priority="beta" size="small">
-      beta
+      {t('beta')}
     </StyledTag>
   </Tooltip>
 );
 
 const StyledTag = styled(Tag)`
   position: relative;
-  top: -1px;
   font-size: ${p => p.theme.fontSizeSmall};
   font-weight: normal;
   padding: 3px 6px;
