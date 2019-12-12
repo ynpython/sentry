@@ -1,26 +1,16 @@
 import {browserHistory} from 'react-router';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {css} from '@emotion/core';
+import styled from '@emotion/styled';
 
 import {t} from 'app/locale';
 import parseLinkHeader from 'app/utils/parseLinkHeader';
 
-const streamCss = css`
-  margin: 20px 0 0 0;
-
-  .icon-arrow-right,
-  .icon-arrow-left {
-    font-size: 20px !important;
-  }
-`;
-
-export default class Pagination extends React.Component {
+class Pagination extends React.Component {
   static propTypes = {
     pageLinks: PropTypes.string,
     to: PropTypes.string,
     onCursor: PropTypes.func,
-    className: PropTypes.string,
   };
 
   static contextTypes = {
@@ -34,7 +24,6 @@ export default class Pagination extends React.Component {
         query: {...query, cursor},
       });
     },
-    className: streamCss,
   };
 
   render() {
@@ -60,8 +49,8 @@ export default class Pagination extends React.Component {
     }
 
     return (
-      <div className={'clearfix' + (className ? ` ${className}` : '')}>
-        <div className="btn-group pull-right">
+      <div className={className}>
+        <div className="btn-group">
           <a
             onClick={() => {
               onCursor(links.previous.cursor, path, query, -1);
@@ -85,3 +74,15 @@ export default class Pagination extends React.Component {
     );
   }
 }
+
+export default styled(Pagination)`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 20px 0 0 0;
+
+  .icon-arrow-right,
+  .icon-arrow-left {
+    font-size: 20px !important;
+  }
+`;
